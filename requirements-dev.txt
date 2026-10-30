@@ -1,0 +1,8 @@
+# Para ejecutar el notebook completo y reentrenar el modelo
+-r requirements.txt
+jupyter
+ipykernel
+matplotlib>=3.8
+seaborn
+scipy
+xgboost>=2.0

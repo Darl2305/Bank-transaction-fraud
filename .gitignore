@@ -1,0 +1,15 @@
+# Dataset original (150 MB): se descarga de Kaggle, no se sube a GitHub
+data/bank_fraud.csv
+*.csv.zip
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# Sistema
+.DS_Store
+Thumbs.db

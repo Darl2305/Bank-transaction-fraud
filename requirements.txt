@@ -1,0 +1,6 @@
+# Dependencias mínimas para ejecutar la app (Streamlit Community Cloud las instala solas)
+streamlit>=1.52
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.4
+lightgbm>=4.3
