@@ -4,7 +4,11 @@ Esta carpeta es la parte de base de datos del Proyecto 1. Lo que hice aquí: arm
 
 Los datos son sintéticos (Kaggle): 1 millón de transacciones 2020-2024 con ~5,5 % de fraude. Aquí cargo la parte de **2024** (199 325 transacciones), que es la que el modelo no vio al entrenar.
 
-## Cómo reproducirlo
+## Pruébalo sin instalar nada
+
+Abre la [app en Streamlit](https://fraude-bancario-darl.streamlit.app), entra a la pestaña **Consultas SQL**, elige una pregunta de negocio y ejecútala. También puedes editar la consulta y probar la tuya. La demo corre sobre SQLite para poder publicarla gratis; el trabajo original está hecho en SQL Server y son los scripts de esta carpeta.
+
+## Reproducirlo en tu propia máquina (SQL Server)
 
 1. Instalar SQL Server (edición Developer) y SSMS. Conectarse a `localhost` con autenticación de Windows.
 2. Los 7 CSV que cargan los scripts se generan a partir de los datos del proyecto y no se suben al repo por su tamaño. Para reproducirlo, genera esos CSV y ajusta la variable `@ruta` del script 02 para que apunte a la carpeta donde los dejaste. Si SQL Server da «acceso denegado» al leer, abrir CMD como administrador y ejecutar: `icacls "<tu_ruta>" /grant "NT Service\MSSQLSERVER:(OI)(CI)R"`.

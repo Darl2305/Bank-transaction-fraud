@@ -23,6 +23,7 @@ import pandas as pd
 import streamlit as st
 from sklearn.metrics import average_precision_score, roc_auc_score
 
+from src import sql_demo
 from src.features import (FEATURE_LABELS, FEATURES, MERCHANT_CATEGORIES, REQUIRED_COLUMNS,
                           RISKY_MERCHANTS, build_features, missing_columns)
 
@@ -104,7 +105,7 @@ st.title("🛡️ Detección de fraude en transacciones bancarias")
 st.write("Modelo de machine learning entrenado con 800 000 transacciones (2020-2023) y evaluado en 2024. "
          "Estima la **probabilidad de fraude** de una transacción, ya sea una del histórico o una nueva que llega hoy.")
 
-tab1, tab2, tab3, tab4 = st.tabs(["Evaluar una transacción", "Evaluar un lote (CSV)", "Rendimiento del modelo", "Sobre el proyecto"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Evaluar una transacción", "Evaluar un lote (CSV)", "Rendimiento del modelo", "Sobre el proyecto", "Consultas SQL"])
 
 # --------------------------------------------------------------------------
 # Pestaña 1: una transacción
@@ -353,3 +354,35 @@ with tab4:
 - En producción habría que monitorear deriva de datos y reentrenar periódicamente.
 """)
     st.link_button("Código, notebook y documentación en GitHub", GITHUB_URL)
+
+# --------------------------------------------------------------------------
+# Pestaña 5: consultas SQL
+# --------------------------------------------------------------------------
+with tab5:
+    st.subheader("Consulta los datos con SQL")
+    st.write("Elige una pregunta de negocio, edita la consulta si quieres y ejecútala. "
+             "La base es de **solo lectura**: no puedes modificar nada.")
+    st.caption("Esta demo corre sobre SQLite para poder publicarla gratis. "
+               "El trabajo original (esquema, carga, consultas y job) se hizo en SQL Server y está en la carpeta `sql/` de GitHub.")
+
+    pregunta = st.selectbox("Pregunta de negocio", list(sql_demo.CONSULTAS))
+    sql = st.text_area("Consulta SQL (puedes editarla)", value=sql_demo.CONSULTAS[pregunta],
+                       height=280, key=f"sql_{pregunta}")
+
+    if st.button("Ejecutar consulta", type="primary"):
+        error = sql_demo.validar(sql)
+        if error:
+            st.warning(error)
+        else:
+            try:
+                resultado, segundos, recortado = sql_demo.ejecutar(sql)
+            except Exception as e:  # error de sintaxis, tabla inexistente, tiempo excedido...
+                st.error(f"No se pudo ejecutar la consulta: {e}")
+            else:
+                st.dataframe(resultado, width="stretch", hide_index=True)
+                st.caption(f"{len(resultado):,} filas en {segundos:.2f} s"
+                           + (f" (se muestran solo las primeras {sql_demo.MAX_FILAS:,})" if recortado else ""))
+
+    with st.expander("Ver tablas y columnas disponibles"):
+        for tabla, columnas in sql_demo.esquema().items():
+            st.markdown(f"**{tabla}**: " + ", ".join(columnas))
